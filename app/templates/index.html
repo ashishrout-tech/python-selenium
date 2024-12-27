@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selenium Script Runner</title>
+    <style>
+        @keyframes loading {
+            0% { opacity: 0.2; }
+            20% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+        .loading {
+            font-size: 20px;
+            font-weight: bold;
+            animation: loading 1s infinite;
+        }
+    </style>
+    <script>
+        async function runSeleniumScript() {
+            const resultDiv = document.getElementById('results');
+            resultDiv.innerHTML = '<p class="loading">Loading...</p>';
+
+            try {
+                const response = await fetch('/run-script');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const result = await response.json();
+
+                resultDiv.innerHTML = `
+                    <p>These are the most happening topics as on ${new Date(result.script_end_date_time).toLocaleString()}</p>
+                    <ul>
+                        ${(() => {
+                            const new_arr = [];
+                            Object.keys(result).forEach(ele => {
+                                if(ele.includes('nameoftrend')) new_arr.push(result[ele]);
+                            });
+                            return new_arr.map(trend => `<li>${trend}</li>`).join('');
+                        })()}
+                    </ul>
+                    <p>The IP address used for this query was ${result.ip_address}</p>
+                    <p>Here's a JSON extract of this record from the MongoDB:</p>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                    <button onclick="runSeleniumScript()">Click here to run the query again.</button>
+                `;
+                const button = document.getElementById('button1');
+                if (button) {
+                    button.remove();
+                }
+            } catch (error) {
+                console.error('Error running Selenium script:', error);
+                resultDiv.innerHTML = '<p class="error">There was an error running the script</p>';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Selenium Script Runner</h1>
+    <button id="button1" onclick="runSeleniumScript()">Click here to run the script</button>
+    <div id="results" style="margin-top: 20px;">
+        {% if latest_record %}
+        <p>These are the most happening topics as on {{ latest_record.script_end_time }}</p>
+        <ul>
+            {% for trend in latest_record.trends %}
+            <li>{{ trend }}</li>
+            {% endfor %}
+        </ul>
+        <p>The IP address used for this query was {{ latest_record.ip_address }}</p>
+        <p>Here's a JSON extract of this record from the MongoDB:</p>
+        <pre>{{ latest_record | tojson }}</pre>
+        <button onclick="runSeleniumScript()">Click here to run the query again.</button>
+        {% endif %}
+    </div>
+</body>
+</html>
