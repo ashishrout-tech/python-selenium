@@ -1,5 +1,7 @@
 # Setup Instructions
 
+[Watch the project video](https://www.youtube.com/watch?v=TKkR8pi9kZ0)
+
 ## 1. Set up Environment Variables
 
 Ensure that all necessary environment variables are set up properly before running the application. These include configurations for your proxy, Chrome profile, and any other required settings.

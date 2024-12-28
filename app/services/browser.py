@@ -42,7 +42,7 @@ class BrowserService:
         driver = self.setup_driver()
         try:
             driver.get("https://x.com/home")
-            time.sleep(25)
+            time.sleep(15)
             explore_div = driver.find_element(By.CSS_SELECTOR, 'div[aria-label="Timeline: Trending now"]')
             return explore_div.get_attribute('outerHTML')
         finally:

@@ -19,7 +19,7 @@ __pycache__/*
 venv/
 venv/*
 ENV/
-env/
+# env/
 
 # Ignore Flask instance folder
 instance/
@@ -39,3 +39,5 @@ app/__pycache__/
 app/__pycache__/*
 app/services/__pycache__/
 app/services/__pycache__/*
+
+data.json
